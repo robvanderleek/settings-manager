@@ -1,2 +1,3 @@
-# settings-manager
+# Settings Manager
+
 Automate your GitHub Settings ⚙️

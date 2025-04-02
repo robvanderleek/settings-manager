@@ -1,0 +1,47 @@
+{
+  "name": "settings-manager",
+  "version": "0.0.0-development",
+  "description": "Automate your GitHub Settings",
+  "author": "Rob van der Leek <robvanderleek@gmail.com> (https://twitter.com/robvanderleek)",
+  "license": "GPL-3.0-or-later",
+  "repository": "https://github.com/settings-manager/settings-manager.git",
+  "homepage": "https://settings-manager.github.io",
+  "bugs": "https://github.com/settings-manager/settings-manager/issues",
+  "keywords": [
+    "github",
+    "automatiom",
+    "settings"
+  ],
+  "scripts": {
+    "prepare": "mkver ./src/version.ts",
+    "start": "next start",
+    "dev": "next dev",
+    "build": "next build",
+    "compile": "tsc --noemit false",
+    "test": "jest",
+    "coverage": "jest --collect-coverage",
+    "probot:start": "yarn compile && probot run ./build/probot.js"
+  },
+  "dependencies": {
+    "next": "^14.2.12",
+    "probot": "^13.4.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "esbuild": "^0.25.1",
+    "jest": "^29.7.0",
+    "mkver": "^2.1.0",
+    "nock": "14.0.0-beta.19",
+    "smee-client": "^2.0.1",
+    "ts-jest": "^29.1.5",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">= 20.x"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testTimeout": 10000
+  }
+}
