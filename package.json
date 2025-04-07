@@ -15,18 +15,19 @@
   "scripts": {
     "prepare": "mkver ./src/version.ts",
     "start": "next start",
-    "dev": "next dev",
+    "dev": "yarn compile && probot run ./build/probot.js",
     "build": "next build",
     "compile": "tsc --noemit false",
     "test": "jest",
-    "coverage": "jest --collect-coverage",
-    "probot:start": "yarn compile && probot run ./build/probot.js"
+    "coverage": "jest --collect-coverage"
   },
   "dependencies": {
+    "@repository-settings/app": "^4.1.8",
     "next": "^14.2.12",
     "probot": "^13.4.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "yaml": "^2.7.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
