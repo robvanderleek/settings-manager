@@ -2,7 +2,7 @@ import {Context, Probot} from "probot";
 import {ApplicationFunctionOptions} from "probot/lib/types";
 import {gitDate, gitSha, version} from "./version";
 import {isDefaultBranch, isSettingsManagerRepo, isSettingsModified} from "./context";
-import {Settings} from "@repository-settings";
+import {Settings} from "@repository-settings/app";
 
 export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
     const buildDate = gitDate.toISOString().substring(0, 10);
