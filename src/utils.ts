@@ -13,3 +13,13 @@ async function loadSettings(ctx: Context<'push'>): Promise<Settings> {
     const yaml = Buffer.from(res.data.content, 'base64').toString();
     return parse(yaml) as Settings;
 }
+
+export function selectProperties(obj: any, keys: string[]): any {
+    const result: any = {};
+    for (const key of keys) {
+        if (key in obj) {
+            result[key] = obj[key];
+        }
+    }
+    return result;
+}

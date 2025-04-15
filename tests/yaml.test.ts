@@ -1,5 +1,5 @@
 import {parse} from "yaml";
-import {Org} from "../src/entities/Organization";
+import {Organization} from "../src/entities/Organization";
 
 test('parse simple yaml', () => {
     let yamlString = '';
@@ -9,11 +9,13 @@ test('parse simple yaml', () => {
     yamlString += '    - name: world\n';
 
     const result = parse(yamlString);
-    const org = result.org as Org;
+    const org = result.org as Organization;
 
-    if (org.issue_types) {
-        for (const it of org.issue_types) {
-            console.log(`it:  ${it.name}`);
-        }
-    }
-})
+    expect(org).toBeDefined();
+    expect(org.issue_types).toBeDefined();
+    expect(org.issue_types).toHaveLength(2);
+    // @ts-ignore
+    expect(org.issue_types[0].name).toBe('hello');
+    // @ts-ignore
+    expect(org.issue_types[1].name).toBe('world');
+});
