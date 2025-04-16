@@ -1,7 +1,7 @@
 import {Context, Probot} from "probot";
 import {ApplicationFunctionOptions} from "probot/lib/types";
 import {gitDate, gitSha, version} from "./version";
-import {getOwner, getRepo, isDefaultBranch, isSettingsManagerRepo, isSettingsModified} from "./context";
+import {getOwner, getRepo, isDefaultBranch, isSettingsModified} from "./context";
 import {Settings} from "./entities/Settings";
 import {selectProperties} from "./utils";
 
@@ -16,7 +16,12 @@ export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
             if (settings && settings.repository) {
                 const owner = getOwner(ctx);
                 const repo = getRepo(ctx);
-                const supportedSettings = selectProperties(settings.repository, ['description', 'homepage', 'private']);
+                const supportedSettings = selectProperties(settings.repository,
+                    ['description', 'homepage', 'private', 'security_and_analysis', 'has_issues', 'has_projects',
+                        'has_wiki', 'is_template', 'default_branch', 'allow_squash_merge', 'allow_merge_commit',
+                        'allow_rebase_merge', 'allow_auto_merge', 'delete_branch_on_merge', 'allow_update_branch',
+                        'squash_merge_commit_title', 'squash_merge_commit_message', 'merge_commit_title',
+                        'merge_commit_message', 'archived', 'allow_forking', 'web_commit_signoff_required']);
                 console.log(supportedSettings);
                 try {
                     await ctx.octokit.request(`PATCH /repos/${owner}/${repo}`, supportedSettings);
@@ -26,11 +31,14 @@ export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
                         repo: repo,
                         sha: sha,
                         state: 'success',
-                        description: 'Settings Manager settings updated',
+                        description: 'Repository settings updated',
                         context: 'Settings Manager'
                     });
                 } catch (e: any) {
-                    const description = `${e.response.data.message}: ${e.response.data.errors[0].message}`;
+                    let description = e.response.data.message;
+                    if ('errors' in e.response.data) {
+                        description += `: ${e.response.data.errors[0].message}`;
+                    }
                     const sha = ctx.payload.after;
                     await ctx.octokit.repos.createCommitStatus({
                         owner: owner,
