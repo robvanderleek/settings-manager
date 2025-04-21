@@ -16,8 +16,8 @@ export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
                 const settings = await ctx.config<Settings>('settings-manager.yml');
                 if (settings) {
                     try {
-                        if (settings.repository) {
-                            await syncGeneral(ctx, settings.repository);
+                        if (settings.general) {
+                            await syncGeneral(ctx, settings.general);
                         }
                         if (settings.labels) {
                             await syncLabels(ctx, false, settings.labels);
