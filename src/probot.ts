@@ -1,11 +1,12 @@
 import {Context, Probot} from "probot";
 import {ApplicationFunctionOptions} from "probot/lib/types";
 import {gitDate, gitSha, version} from "./version";
-import {isDefaultBranch, isSettingsModified} from "./context";
+import {getOwner, getRepo, isDefaultBranch, isSettingsModified} from "./context";
 import {Settings} from "./entities/Settings";
 import {syncGeneral} from "./sections/general";
 import {createCommitStatus} from "./github";
 import {syncLabels} from "./sections/labels";
+import {GitHubApi} from "./utils/GitHubApi";
 
 export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
     const buildDate = gitDate.toISOString().substring(0, 10);
@@ -15,12 +16,13 @@ export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
             if (isDefaultBranch(ctx) && isSettingsModified(ctx)) {
                 const settings = await ctx.config<Settings>('settings-manager.yml');
                 if (settings) {
+                    const api = new GitHubApi(getOwner(ctx), getRepo(ctx), ctx.octokit);
                     try {
                         if (settings.general) {
                             await syncGeneral(ctx, settings.general);
                         }
                         if (settings.labels) {
-                            await syncLabels(ctx, false, settings.labels);
+                            await syncLabels(api, false, settings.labels);
                         }
                         await createCommitStatus(ctx, 'success', 'Repository settings updated');
                     } catch (e: any) {

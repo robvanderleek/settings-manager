@@ -70,3 +70,16 @@ test('delete label', async () => {
     expect(api.patch).toHaveBeenCalledTimes(0);
     expect(api.delete).toHaveBeenCalledWith('/repos/{owner}/{repo}/labels/{name}', featureLabel);
 });
+
+test('no delete if not enabled', async () => {
+    const featureLabel = {name: 'feature', color: 'blue', description: 'A feature'};
+    const api = mockGitHubApi([{name: 'bug', color: 'red', description: 'A bug'}, featureLabel]);
+
+    const label = {name: 'bug', color: 'red', description: 'A bug'};
+
+    await syncLabels(api, false, [label]);
+
+    expect(api.post).toHaveBeenCalledTimes(0);
+    expect(api.patch).toHaveBeenCalledTimes(0);
+    expect(api.delete).toHaveBeenCalledTimes(0);
+});
