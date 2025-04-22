@@ -16,7 +16,7 @@ export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
             if (isDefaultBranch(ctx) && isSettingsModified(ctx)) {
                 const settings = await ctx.config<Settings>('settings-manager.yml');
                 if (settings) {
-                    const api = new GitHubApi(getOwner(ctx), getRepo(ctx), ctx.octokit);
+                    const api = new GitHubApi(getOwner(ctx), getRepo(ctx), ctx.octokit, app.log);
                     try {
                         if (settings.general) {
                             await syncGeneral(ctx, settings.general);
