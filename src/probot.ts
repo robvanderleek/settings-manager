@@ -3,10 +3,12 @@ import {ApplicationFunctionOptions} from "probot/lib/types";
 import {gitDate, gitSha, version} from "./version";
 import {getOwner, getRepo, isDefaultBranch, isSettingsModified} from "./context";
 import {Settings} from "./entities/Settings";
-import {syncGeneral} from "./sections/general";
+import {GeneralSyncer} from "./syncers/GeneralSyncer";
 import {createCommitStatus} from "./github";
-import {syncLabels} from "./sections/labels";
 import {GitHubApi} from "./utils/GitHubApi";
+import {LabelsSyncer} from "./syncers/LabelsSyncer";
+import {Syncer} from "./syncers/Syncer";
+import {CollaboratorsSyncer} from "./syncers/CollaboratorsSyncer";
 
 export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
     const buildDate = gitDate.toISOString().substring(0, 10);
@@ -17,12 +19,18 @@ export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
                 const settings = await ctx.config<Settings>('settings-manager.yml');
                 if (settings) {
                     const api = new GitHubApi(getOwner(ctx), getRepo(ctx), ctx.octokit, app.log);
+                    const syncerMap: { [k: string]: Syncer<any> } = {};
+                    syncerMap['general'] = new GeneralSyncer();
+                    syncerMap['labels'] = new LabelsSyncer();
+                    syncerMap['collaborators'] = new CollaboratorsSyncer();
                     try {
-                        if (settings.general) {
-                            await syncGeneral(ctx, settings.general);
-                        }
-                        if (settings.labels) {
-                            await syncLabels(api, false, settings.labels);
+                        type SettingsKey = keyof typeof settings;
+                        for (const key in syncerMap) {
+                            const syncer = syncerMap[key];
+                            const section = key as SettingsKey;
+                            if (section in settings) {
+                                await syncer.sync(api, false, settings[section]);
+                            }
                         }
                         await createCommitStatus(ctx, 'success', 'Repository settings updated');
                     } catch (e: any) {

@@ -2,11 +2,11 @@ export interface General {
     description?: string;
     homepage?: string;
     private?: boolean;
-    security_and_analysis: any;
-    has_issues: boolean;
-    has_projects: boolean;
+    security_and_analysis?: any;
+    has_issues?: boolean;
+    has_projects?: boolean;
     has_wiki?: boolean;
-    is_template: boolean;
+    is_template?: boolean;
     default_branch?: string;
     allow_squash_merge?: boolean;
     allow_merge_commit?: boolean;

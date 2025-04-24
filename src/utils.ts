@@ -23,3 +23,16 @@ export function selectProperties(obj: any, keys: string[]): any {
     }
     return result;
 }
+
+export function containsUpdate(value: object, existing: object): boolean {
+    for (const key in existing) {
+        if (key in value) {
+            const valueKey = key as keyof typeof value;
+            const existingKey = key as keyof typeof existing;
+            if (value[valueKey] !== existing[existingKey]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}

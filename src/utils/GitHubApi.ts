@@ -10,6 +10,11 @@ export class GitHubApi {
         await this.octokit.request(`POST ${endpoint}`, {owner: this.owner, repo: this.repo, ...body});
     }
 
+    async put(endpoint: string, body: any): Promise<void> {
+        this.log.info(`PUT ${endpoint}`);
+        await this.octokit.request(`PUT ${endpoint}`, {owner: this.owner, repo: this.repo, ...body});
+    }
+
     async getAll(endpoint: string): Promise<any[]> {
         this.log.info(`GET ${endpoint}`);
         return await this.octokit.paginate(`GET ${endpoint}`, {owner: this.owner, repo: this.repo});

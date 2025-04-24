@@ -1,7 +1,7 @@
 import {Label} from "./Label";
+import {General} from "./General";
 
 export interface Settings {
-    organization?: any;
-    general?: any;
+    general?: General;
     labels?: Label[];
 }
