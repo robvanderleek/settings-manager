@@ -23,4 +23,18 @@ test('containsUpdate', () => {
     expect(containsUpdate(c, a)).toBe(false);
     expect(containsUpdate(d, a)).toBe(true);
     expect(containsUpdate(a, d)).toBe(true);
+    expect(containsUpdate(undefined, a)).toBe(false);
+    expect(containsUpdate(a, undefined)).toBe(true);
+});
+
+test('containsUpdate with nested object', () => {
+    const a = {name: 'develop', protection: {required_pull_request_reviews: {required_approving_review_count: 1}}};
+    const b = {name: 'develop', protection: {required_pull_request_reviews: {required_approving_review_count: 1}}};
+    const c = {name: 'develop', protection: {required_pull_request_reviews: {required_approving_review_count: 2}}};
+
+    expect(containsUpdate(a, a)).toBe(false);
+    expect(containsUpdate(a, b)).toBe(false);
+    expect(containsUpdate(b, a)).toBe(false);
+    expect(containsUpdate(a, c)).toBe(true);
+    expect(containsUpdate(c, a)).toBe(true);
 });

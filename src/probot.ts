@@ -9,6 +9,7 @@ import {GitHubApi} from "./utils/GitHubApi";
 import {LabelsSyncer} from "./syncers/LabelsSyncer";
 import {Syncer} from "./syncers/Syncer";
 import {CollaboratorsSyncer} from "./syncers/CollaboratorsSyncer";
+import {BranchesSyncer} from "./syncers/BranchesSyncer";
 
 export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
     const buildDate = gitDate.toISOString().substring(0, 10);
@@ -17,12 +18,14 @@ export const app = (app: Probot, {getRouter}: ApplicationFunctionOptions) => {
     app.on('push', async (ctx: Context<'push'>) => {
             if (isDefaultBranch(ctx) && isSettingsModified(ctx)) {
                 const settings = await ctx.config<Settings>('settings-manager.yml');
+                // TODO: Use Zod to validate the settings? https://github.com/colinhacks/zod?
                 if (settings) {
                     const api = new GitHubApi(getOwner(ctx), getRepo(ctx), ctx.octokit, app.log);
                     const syncerMap: { [k: string]: Syncer<any> } = {};
                     syncerMap['general'] = new GeneralSyncer();
                     syncerMap['labels'] = new LabelsSyncer();
                     syncerMap['collaborators'] = new CollaboratorsSyncer();
+                    syncerMap['branches'] = new BranchesSyncer();
                     try {
                         type SettingsKey = keyof typeof settings;
                         for (const key in syncerMap) {

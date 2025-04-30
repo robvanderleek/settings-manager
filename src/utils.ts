@@ -24,13 +24,25 @@ export function selectProperties(obj: any, keys: string[]): any {
     return result;
 }
 
-export function containsUpdate(value: object, existing: object): boolean {
+export function containsUpdate(value?: object, existing?: object): boolean {
+    if (!value) {
+        return false;
+    }
+    if (!existing) {
+        return true;
+    }
     for (const key in existing) {
         if (key in value) {
             const valueKey = key as keyof typeof value;
             const existingKey = key as keyof typeof existing;
-            if (value[valueKey] !== existing[existingKey]) {
-                return true;
+            if (typeof value[valueKey] === 'object' && typeof existing[existingKey] === 'object') {
+                if (containsUpdate(value[valueKey], existing[existingKey])) {
+                    return true;
+                }
+            } else {
+                if (value[valueKey] !== existing[existingKey]) {
+                    return true;
+                }
             }
         }
     }
